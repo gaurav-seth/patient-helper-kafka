@@ -1,0 +1,23 @@
+server:
+  port: 8081   # You may change this if needed
+
+spring:
+  application:
+    name: reception-service
+
+  kafka:
+    bootstrap-servers: localhost:29092   # Kafka exposed by Docker Compose
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    properties:
+      spring:
+        json:
+          add:
+            type:
+              headers: false   # Avoid adding Java class type info in Kafka messages
+
+    topic:
+      patientRegistered: patient.registered
