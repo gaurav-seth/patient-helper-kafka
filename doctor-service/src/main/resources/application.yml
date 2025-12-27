@@ -9,3 +9,4 @@ spring:
     bootstrap-servers: localhost:29092
     topic:
       doctorAssigned: doctor.assigned
+      testOrdered: test.ordered

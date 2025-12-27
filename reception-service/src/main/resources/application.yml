@@ -18,6 +18,7 @@ spring:
           add:
             type:
               headers: false   # Avoid adding Java class type info in Kafka messages
+      schema.registry.url: http://localhost:8085				
 
     topic:
       patientRegistered: patient.registered

@@ -6,8 +6,10 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import com.patient.helper.doctor.model.DoctorAssignedEvent;
-import com.patient.helper.doctor.model.PatientRegisteredEvent;
+import com.patient.helper.doctor.policy.DoctorAssignmentPolicy;
+import com.patient.helper.doctor.policy.PolicyResolver;
 import com.patient.helper.doctor.service.KafkaDoctorProducerService;
+import com.patient.helper.events.PatientRegisteredEvent;
 
 /**
  * PatientRegisteredConsumer
@@ -29,6 +31,9 @@ public class PatientRegisteredConsumer {
 
 	@Autowired
 	private KafkaDoctorProducerService producerService;
+	
+	@Autowired
+	private PolicyResolver policyResolver;
 
 	/**
 	 * Kafka listener method that consumes patient registration events.
@@ -45,27 +50,14 @@ public class PatientRegisteredConsumer {
 
 		PatientRegisteredEvent event = record.value();
 		
-		System.out.println("Consumed patient.registered event");
-	    System.out.println("Key: " + record.key());
-	    System.out.println("Partition: " + record.partition());
-	    System.out.println("Offset: " + record.offset());
-	    System.out.println("Event: " + event);
+		DoctorAssignmentPolicy policy = policyResolver.resolve(event.getPolicyVersion().toString());
 
-		System.out.println("Consumed patient.registered event for patientId: " + event.getPatientId());
-
-		// ---- Doctor assignment logic (simple) ----
-		DoctorAssignedEvent doctorAssignedEvent =
-				new DoctorAssignedEvent(
-						event.getPatientId(),
-						"D-101",
-						"Dr. Rajesh Verma",
-						"General Physician",
-						System.currentTimeMillis()
-						);
-
+		DoctorAssignedEvent doctorAssignedEvent = policy.assign(event);
+		
 		// ---- Publish next event ----
 		producerService.sendDoctorAssignedEvent(doctorAssignedEvent);
 
-		System.out.println("Published doctor.assigned event for patientId: " + event.getPatientId());
+		System.out.println("Policy: " + event.getPolicyVersion() + ", Doctor: " + doctorAssignedEvent.getDoctorId() + 
+				" assigned to patient: " + event.getName());
 	}
 }

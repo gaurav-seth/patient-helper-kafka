@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "PatientRegisteredEvent",
+  "namespace": "com.patient.helper.events",
+  "fields": [
+    { "name": "patientId", "type": "string" },
+    { "name": "name", "type": "string" },
+    { "name": "age", "type": "int" },
+    { "name": "phone", "type": "string" },
+    { "name": "timestamp", "type": "long" },
+    {
+      "name": "policyVersion",
+      "type": "string",
+      "default": "v1"
+    }
+  ]
+}

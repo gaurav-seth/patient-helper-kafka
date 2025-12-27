@@ -1,6 +1,6 @@
 package com.patient.helper.reception.controller;
 
-import com.patient.helper.reception.model.PatientRegisteredEvent;
+import com.patient.helper.events.PatientRegisteredEvent;
 import com.patient.helper.reception.service.KafkaProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -56,13 +56,15 @@ public class PatientController {
         String patientId = UUID.randomUUID().toString();  // unique ID
         long timestamp = Instant.now().toEpochMilli();
 
-        PatientRegisteredEvent event = new PatientRegisteredEvent(
-                patientId,
-                request.getName(),
-                request.getAge(),
-                request.getPhone(),
-                timestamp
-        );
+        PatientRegisteredEvent event =
+        	    PatientRegisteredEvent.newBuilder()
+        	        .setPatientId(patientId)
+        	        .setName(request.getName())
+        	        .setAge(request.getAge())
+        	        .setPhone(request.getPhone())
+        	        .setTimestamp(timestamp)
+        	        .setPolicyVersion("v1")
+        	        .build();
 
         producerService.sendPatientRegisteredEvent(event);
 

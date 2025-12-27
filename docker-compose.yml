@@ -42,6 +42,19 @@ services:
       - kafka_data:/var/lib/kafka/data           # Persist Kafka data across restarts
 
 
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.4.1
+    container_name: schema-registry
+    depends_on:
+      - kafka
+    ports:
+      - "8085:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+
+
+
 ###########################################################
 #                DOCKER VOLUME DECLARATIONS               #
 ###########################################################

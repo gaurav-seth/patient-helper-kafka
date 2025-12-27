@@ -1,6 +1,6 @@
 package com.patient.helper.reception.service;
 
-import com.patient.helper.reception.model.PatientRegisteredEvent;
+import com.patient.helper.events.PatientRegisteredEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class KafkaProducerService {
      * @param event The event containing patient registration details
      */
     public void sendPatientRegisteredEvent(PatientRegisteredEvent event) {
-        kafkaTemplate.send(topicName, event.getPatientId(), event);
+        kafkaTemplate.send(topicName, event.getPatientId().toString(), event);
         System.out.println("Published event to Kafka: " + event);
     }
 }

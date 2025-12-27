@@ -1,6 +1,8 @@
 package com.patient.helper.doctor.config;
 
 import com.patient.helper.doctor.model.DoctorAssignedEvent;
+import com.patient.helper.doctor.model.TestOrderedEvent;
+
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -33,9 +35,27 @@ public class KafkaProducerConfig {
 
         return new DefaultKafkaProducerFactory<>(props);
     }
+    
+    @Bean
+    public ProducerFactory<String, TestOrderedEvent> testOrderedProducerFactory() {
+
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        return new DefaultKafkaProducerFactory<>(configProps);
+    }
+
 
     @Bean
     public KafkaTemplate<String, DoctorAssignedEvent> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
+    
+    @Bean
+    public KafkaTemplate<String, TestOrderedEvent> testOrderedKafkaTemplate() {
+        return new KafkaTemplate<>(testOrderedProducerFactory());
+    }
+
 }
